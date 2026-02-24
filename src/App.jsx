@@ -1,36 +1,46 @@
-import './App.css'
-import TaskList from './components/TaskList'
-import InputTask from './components/InputTask'
-import { useTasks } from './hooks/useTasks'
+import Title from "./components/Title"
+import InputNewTask from "./components/InputNewTask"
+import TaskList from "./components/TaskList"
+import EditIndividualTask from "./components/EditIndividualTask"
+import { useTasks } from "./hooks/useTasks"
+
 
 function App() {
 
   const {
     taskList,
-    handleAddTask,
-    handleDeleteTask,
-    handleCompletedTask,
-    handleEditTask,
     userInput,
-    setUserInput
-  } = useTasks();
-
+    handleAddTask,
+    handleOnChangeInput,
+    handleTaskComplete,
+    taskId,
+    handleEditTaskButton,
+    handleSaveEdit,
+    handleSaveEditButton,
+    handleCancelEditButton,
+    handleDeleteButton,
+  } = useTasks()
   
   return (
     <div
-      className='flex flex-col justify-center text-center gap-10'
+      className="flex flex-col items-center justify-center w-full h-full min-h-screen min-w-screen gap-10"
     >
-      <p>To-Do List App</p>
-      <InputTask
+      <Title />
+      <InputNewTask
         userInput={userInput}
-        onChange={(e) => setUserInput(e.target.value)}
         handleAddTask={handleAddTask}
+        handleOnChangeInput={handleOnChangeInput}
       />
-      <TaskList 
-        theTasks={taskList}
-        handleDeleteTask={handleDeleteTask}
-        handleCompletedTask={handleCompletedTask}
-        handleEditTask={handleEditTask}
+      <TaskList
+        taskList={taskList}
+        handleTaskComplete={handleTaskComplete}
+        taskId={taskId}
+        handleEditTaskButton={handleEditTaskButton}
+        userInput={userInput}
+        handleSaveEdit={handleSaveEdit}
+        handleSaveEditButton={handleSaveEditButton}
+        handleCancelEditButton={handleCancelEditButton}
+        handleDeleteButton={handleDeleteButton}
       />
     </div>
   )

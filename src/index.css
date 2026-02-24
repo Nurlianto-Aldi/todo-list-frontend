@@ -1,11 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Nothing+You+Could+Do&family=Rubik:wght@900&display=swap');
 @import "tailwindcss";
 
-/* @theme {
-
-} */
+@theme {
+  --font-rubik: "Rubik", sans-serif;
+  --font-nothing: "Nothing You Could Do", cursive;
+} 
 
 @layer base {
   body {
-    @apply bg-slate-900 text-white min-h-screen flex items-center justify-center;
+    @apply bg-slate-900 text-white min-h-screen min-w-screen;
   }
 }

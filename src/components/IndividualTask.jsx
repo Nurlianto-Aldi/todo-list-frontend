@@ -7,7 +7,7 @@ function IndividualTask({ task, handleTaskComplete, handleEditTaskButton, handle
   
   return (
     <div
-      className="flex bg-blue-900 py-2.5 px-5 gap-5 rounded-md w-full max-w-xl h-full items-center justify-center text-xl hover:bg-blue-700"
+      className="flex bg-blue-900 py-1 px-2.5 sm:py-2.5 sm:px-5 gap-5 rounded-md w-full max-w-xl h-full items-center justify-center text-xl hover:bg-blue-700"
     >
       
       {/* Text */}

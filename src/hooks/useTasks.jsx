@@ -1,10 +1,4 @@
 import { useEffect, useState } from "react"
-
-  // const fakeDatabase = [
-  //   {id: 1, task: "Learning React", isCompleted: false},
-  //   {id: 2, task: "Learning Express.js", isCompleted: false},
-  //   {id: 3, task: "Learning TailwindCSS", isCompleted: false},
-  // ]
   
 export function useTasks() {
   
@@ -15,7 +9,7 @@ export function useTasks() {
   
   const fetchTask = async () => {
     try {
-      const response = await fetch("http://localhost:3000/tasks")
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`)
       
       if (!response.ok) {
         throw new Error("Failed to fetch all task")
@@ -48,7 +42,7 @@ export function useTasks() {
         return;
       }
       
-      const response = await fetch("http://localhost:3000/tasks", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -76,7 +70,7 @@ export function useTasks() {
       const targetTask = taskList.find((task) => task.id === taskId);
       const newStatus = !targetTask.isCompleted;
       
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}/complete`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}/complete`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
@@ -115,7 +109,7 @@ export function useTasks() {
   
   const handleSaveEditButton = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
@@ -152,7 +146,7 @@ export function useTasks() {
         return false
       }
       
-      const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`, {
         method: "DELETE"
       });
       

@@ -45,7 +45,7 @@ function EditIndividualTask({ task, handleSaveEdit, handleSaveEditButton, handle
           // onClick={() => handleCancelEditButton()}
           onMouseDown={(e) => {
             e.preventDefault();
-            handleSaveEditButton()
+            handleCancelEditButton()
           }}
           className="cursor-pointer"
         />

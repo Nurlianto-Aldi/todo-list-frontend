@@ -4,7 +4,6 @@ import TaskList from "./components/TaskList"
 import EditIndividualTask from "./components/EditIndividualTask"
 import { useTasks } from "./hooks/useTasks"
 
-
 function App() {
 
   const {

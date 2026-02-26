@@ -16,6 +16,7 @@ function EditIndividualTask({ task, handleSaveEdit, handleSaveEditButton, handle
           autoFocus
           type="text"
           className="w-full"
+          value={task}
           placeholder={task}
           onChange={(e) => handleSaveEdit(e.target.value)}
           // onBlur={() => handleCancelEditButton()}

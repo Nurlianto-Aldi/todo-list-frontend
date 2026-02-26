@@ -22,7 +22,7 @@ function App() {
   
   return (
     <div
-      className="flex flex-col items-center justify-center w-full h-full min-h-screen min-w-screen gap-10"
+      className="flex flex-col items-center justify-start w-full h-full min-h-screen min-w-screen gap-10 px-10 py-10"
     >
       <Title />
       <InputNewTask

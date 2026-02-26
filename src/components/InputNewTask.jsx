@@ -16,11 +16,11 @@ function InputNewTask({ handleAddTask, userInput, handleOnChangeInput }) {
         onChange={(e) => handleOnChangeInput(e.target.value)}
         value={userInput}
         placeholder="Add new task in here..."
-        className="bg-white text-black placeholder-gray-300 py-2.5 px-5 rounded-l-md border-none outline-none w-4/5"
+        className="bg-white text-black placeholder-gray-300 py-2.5 px-5 rounded-l-md border-none outline-none w-5/7 sm:w-4/5 text-sm sm:text-base"
       />
       <button
         onClick={() => handleAddTask()}
-        className="bg-blue-900 hover:bg-blue-500 py-2.5 px-5 rounded-r-md w-1/5"
+        className="bg-blue-900 hover:bg-blue-700 py-2.5 px-5 rounded-r-md w-2/7 sm:w-1/5 text-sm sm:text-base"
       >
         Add Task
       </button>

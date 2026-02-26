@@ -7,7 +7,7 @@ function IndividualTask({ task, handleTaskComplete, handleEditTaskButton, handle
   
   return (
     <div
-      className="flex bg-blue-900 py-2.5 px-5 gap-5 rounded-md w-full max-w-xl h-full items-center justify-center text-xl"
+      className="flex bg-blue-900 py-2.5 px-5 gap-5 rounded-md w-full max-w-xl h-full items-center justify-center text-xl hover:bg-blue-700"
     >
       
       {/* Text */}
@@ -16,7 +16,7 @@ function IndividualTask({ task, handleTaskComplete, handleEditTaskButton, handle
       >
         <span
           onClick={() => handleTaskComplete(task.id)}
-          className={`cursor-pointer break-all ${task.isCompleted === true ? "line-through" : ""}`}
+          className={`cursor-pointer break-all text-sm sm:text-base ${task.isCompleted === true ? "line-through" : ""}`}
         >
           {task.task}
         </span>

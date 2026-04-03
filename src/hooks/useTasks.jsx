@@ -8,11 +8,18 @@ export function useTasks() {
   const [newInput, setNewInput] = useState("")
   
   const fetchTask = async () => {
+    const token = localStorage.getItem("token");
+    
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`)
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
       
       if (!response.ok) {
-        throw new Error("Failed to fetch all task")
+        throw new Error("Failed to fetch all task:")
       }
     
       const result = await response.json()
@@ -36,6 +43,7 @@ export function useTasks() {
   }
   
   const handleAddTask = async () => {
+    const token = localStorage.getItem("token");
     try {
       if (!userInput.trim()) {
         alert("Task can't be empty")
@@ -45,7 +53,8 @@ export function useTasks() {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           task: userInput
@@ -66,6 +75,7 @@ export function useTasks() {
   
   
   const handleTaskComplete = async (taskId) => {
+    const token = localStorage.getItem("token")
     try {
       const targetTask = taskList.find((task) => task.id === taskId);
       const newStatus = !targetTask.isCompleted;
@@ -73,7 +83,8 @@ export function useTasks() {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}/complete`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           isCompleted: newStatus
@@ -108,11 +119,13 @@ export function useTasks() {
   }
   
   const handleSaveEditButton = async () => {
+    const token = localStorage.getItem("token");
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`, {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           task: newInput
@@ -138,6 +151,7 @@ export function useTasks() {
   }
   
   const handleDeleteButton = async (taskId) => {
+    const token = localStorage.getItem("token")
     try {
       const targetTask = taskList.find(task => task.id === taskId)
       
@@ -147,7 +161,10 @@ export function useTasks() {
       }
       
       const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
       });
       
       if (!response.ok) {

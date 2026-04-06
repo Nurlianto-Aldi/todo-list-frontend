@@ -5,10 +5,14 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
+  const [isLoading, setIsLoading] = useState(false);
+  
   const navigate = useNavigate();
   
   const handleRegister = async (e) => {
     e.preventDefault();
+    
+    setIsLoading(true)
     
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
@@ -32,6 +36,8 @@ function Register() {
 
     } catch (err) {
       console.error("Failed to connect to server:", err)
+    } finally {
+      setIsLoading(false)
     }
   }
   
@@ -56,8 +62,13 @@ function Register() {
           className="border border-gray-400 p-2 rounded focus:outline-none placeholder-gray-600 text-white"
           required
         />
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold">
-          Sign Up
+        <button
+          type="submit"
+          className={`text-white p-2 rounded font-bold ${
+              isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
+        >
+          {isLoading ? "Loading..." : "Sign Up"}
         </button>
       </form>
       <div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom";
   
 export function useTasks() {
   
@@ -6,6 +7,8 @@ export function useTasks() {
   const [taskId, setTaskId] = useState("");
   const [userInput, setUserInput] = useState("");
   const [newInput, setNewInput] = useState("")
+  
+  const navigate = useNavigate();
   
   const fetchTask = async () => {
     const token = localStorage.getItem("token");
@@ -17,6 +20,13 @@ export function useTasks() {
           "Authorization": `Bearer ${token}`
         }
       });
+      
+      if (response.status === 401 || response.status === 403) {
+        alert("Your session is expired. Silahkan login kembali.");
+        localStorage.removeItem("token");
+        navigate("/login")
+        return;
+      }
       
       if (!response.ok) {
         throw new Error("Failed to fetch all task:")
@@ -61,6 +71,13 @@ export function useTasks() {
         })
       })
       
+      if (response.status === 401 || response.status === 403) {
+        alert("Your session is expired. Silahkan login kembali.");
+        localStorage.removeItem("token");
+        navigate("/login")
+        return;
+      }
+      
       if (!response.ok) {
         throw new Error("Failed to add new task to database")
       }
@@ -90,6 +107,13 @@ export function useTasks() {
           isCompleted: newStatus
         })
       })
+      
+      if (response.status === 401 || response.status === 403) {
+        alert("Your session is expired. Silahkan login kembali.");
+        localStorage.removeItem("token");
+        navigate("/login")
+        return;
+      }
       
       if (!response.ok) {
         throw new Error("Failed to change complete status at database")
@@ -132,6 +156,13 @@ export function useTasks() {
         })
       })
       
+      if (response.status === 401 || response.status === 403) {
+        alert("Your session is expired. Silahkan login kembali.");
+        localStorage.removeItem("token");
+        navigate("/login")
+        return;
+      }
+      
       if (!response.ok) {
         throw new Error("Failed to update task for task with this id:", taskId)
       }
@@ -166,6 +197,13 @@ export function useTasks() {
           "Authorization": `Bearer ${token}`
         }
       });
+      
+      if (response.status === 401 || response.status === 403) {
+        alert("Your session is expired. Silahkan login kembali.");
+        localStorage.removeItem("token");
+        navigate("/login")
+        return;
+      }
       
       if (!response.ok) {
         throw new Error("Failed to delete task from database")

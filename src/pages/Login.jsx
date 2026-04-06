@@ -5,10 +5,14 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   
+  const [isLoading, setIsLoading] = useState(false);
+  
   const navigate = useNavigate();
   
   const handleLogin = async (e) => {
     e.preventDefault();
+    
+    setIsLoading(true);
     
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
@@ -25,13 +29,15 @@ function Login() {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        alert("Login Berhasil")
         navigate("/")
       } else {
         alert(data.message)
       }
     } catch (error) {
+      alert("Terjadi kesalahan jaringan, coba lagi.")
       console.error("Gagal menyambung ke server:", error)
+    } finally {
+      setIsLoading(false)
     }
       
   }
@@ -56,9 +62,15 @@ function Login() {
             className="border border-gray-400 p-2 rounded focus:outline-none placeholder-gray-600 text-white"
             required
           />
-          <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold">
-            Masuk
-          </button>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`text-white p-2 rounded font-bold transition-colors ${
+            isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+            }`}
+        >
+          {isLoading ? "Loading..." : "Sign In"}
+        </button>
       </form>
       <div>
         <p>

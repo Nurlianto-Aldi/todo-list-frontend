@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -38,14 +38,14 @@ function Login() {
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h2 className="text-3xl font-bold mb-6">Login Dulu Bro</h2>    
+      <h2 className="text-3xl font-bold mb-6">Login</h2>    
       <form onSubmit={handleLogin} className="flex flex-col gap-4 w-80">
         <input 
           type="email" 
           placeholder="Email" 
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border border-gray-400 p-2 rounded text-black focus:outline-none placeholder-gray-600 text-white"
+          className="border border-gray-400 p-2 rounded focus:outline-none placeholder-gray-600 text-white"
           required
         />
           <input 
@@ -53,13 +53,21 @@ function Login() {
             placeholder="Password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="border border-gray-400 p-2 rounded text-black focus:outline-none placeholder-gray-600 text-white"
+            className="border border-gray-400 p-2 rounded focus:outline-none placeholder-gray-600 text-white"
             required
           />
           <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 font-bold">
             Masuk
           </button>
       </form>
+      <div>
+        <p>
+          Don't have an account yet? Please{" "}
+          <Link to="/register" className="text-blue-600 underline">
+            Sign Up
+          </Link>
+        </p>
+      </div>
     </div>
   )
 }

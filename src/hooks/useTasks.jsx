@@ -10,23 +10,33 @@ export function useTasks() {
   
   const navigate = useNavigate();
   
-  const fetchTask = async () => {
+  const fetchWithAuth = async (endpoint, options = {}) => {
     const token = localStorage.getItem("token");
     
+    const headers = {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+      ...options.headers
+    };
+    
+    const response = await fetch(`${import.meta.env.VITE_API_URL}${endpoint}`, {
+      ...options,
+      headers
+    });
+    
+    if (response.status === 401 || response.status === 403) {
+      alert("Your session is expired. Silahkan login kembali.");
+      localStorage.removeItem("token");
+      navigate("/login");
+      throw new Error("SESSION_EXPIRED");
+    }
+    
+    return response;
+  }
+  
+  const fetchTask = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      
-      if (response.status === 401 || response.status === 403) {
-        alert("Your session is expired. Silahkan login kembali.");
-        localStorage.removeItem("token");
-        navigate("/login")
-        return;
-      }
+      const response = await fetchWithAuth("/tasks", { method: "GET" })
       
       if (!response.ok) {
         throw new Error("Failed to fetch all task:")
@@ -53,30 +63,16 @@ export function useTasks() {
   }
   
   const handleAddTask = async () => {
-    const token = localStorage.getItem("token");
     try {
       if (!userInput.trim()) {
         alert("Task can't be empty")
         return;
       }
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks`, {
+      const response = await fetchWithAuth("/tasks", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          task: userInput
-        })
-      })
-      
-      if (response.status === 401 || response.status === 403) {
-        alert("Your session is expired. Silahkan login kembali.");
-        localStorage.removeItem("token");
-        navigate("/login")
-        return;
-      }
+        body: JSON.stringify({ task: userInput })
+      });
       
       if (!response.ok) {
         throw new Error("Failed to add new task to database")
@@ -92,28 +88,16 @@ export function useTasks() {
   
   
   const handleTaskComplete = async (taskId) => {
-    const token = localStorage.getItem("token")
     try {
       const targetTask = taskList.find((task) => task.id === taskId);
       const newStatus = !targetTask.isCompleted;
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}/complete`, {
+      const response = await fetchWithAuth(`/tasks/${taskId}/complete`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
         body: JSON.stringify({
           isCompleted: newStatus
         })
       })
-      
-      if (response.status === 401 || response.status === 403) {
-        alert("Your session is expired. Silahkan login kembali.");
-        localStorage.removeItem("token");
-        navigate("/login")
-        return;
-      }
       
       if (!response.ok) {
         throw new Error("Failed to change complete status at database")
@@ -143,25 +127,12 @@ export function useTasks() {
   }
   
   const handleSaveEditButton = async () => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          task: newInput
-        })
-      })
       
-      if (response.status === 401 || response.status === 403) {
-        alert("Your session is expired. Silahkan login kembali.");
-        localStorage.removeItem("token");
-        navigate("/login")
-        return;
-      }
+      const response = await fetchWithAuth(`/tasks/${taskId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ task: newInput })
+        })
       
       if (!response.ok) {
         throw new Error("Failed to update task for task with this id:", taskId)
@@ -173,7 +144,6 @@ export function useTasks() {
     } catch (err) {
       console.error("WARNING! There is an error:", err)
     }
-    
   }
   
   const handleCancelEditButton = () => {
@@ -182,7 +152,6 @@ export function useTasks() {
   }
   
   const handleDeleteButton = async (taskId) => {
-    const token = localStorage.getItem("token")
     try {
       const targetTask = taskList.find(task => task.id === taskId)
       
@@ -191,20 +160,10 @@ export function useTasks() {
         return false
       }
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/tasks/${taskId}`, {
+      const response = await fetchWithAuth(`/tasks/${taskId}`, {
         method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      
-      if (response.status === 401 || response.status === 403) {
-        alert("Your session is expired. Silahkan login kembali.");
-        localStorage.removeItem("token");
-        navigate("/login")
-        return;
-      }
-      
+      })
+            
       if (!response.ok) {
         throw new Error("Failed to delete task from database")
       }

@@ -64,6 +64,7 @@ function Register() {
         />
         <button
           type="submit"
+          disabled={isLoading}
           className={`text-white p-2 rounded font-bold ${
               isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
             }`}

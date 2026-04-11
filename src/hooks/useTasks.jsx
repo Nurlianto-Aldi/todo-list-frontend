@@ -7,8 +7,10 @@ export function useTasks() {
   const [taskId, setTaskId] = useState("");
   const [userInput, setUserInput] = useState("");
   const [newInput, setNewInput] = useState("")
-  
+  // loading state for new task
   const [isAddingTask, setIsAddingTask] = useState(false)
+  // loading state for the task list
+  const [isFetchingTasks, setIsFetchingTask] = useState(true)
   
   const navigate = useNavigate();
   
@@ -37,6 +39,7 @@ export function useTasks() {
   }
   
   const fetchTask = async () => {
+    setIsFetchingTask(true)
     try {
       const response = await fetchWithAuth("/tasks", { method: "GET" })
       
@@ -52,6 +55,8 @@ export function useTasks() {
       
     } catch (err) {
       console.error("WARNING! There is an error:", err)
+    } finally {
+      setIsFetchingTask(false)
     }
   }
   
@@ -197,5 +202,6 @@ export function useTasks() {
     handleSaveEditButton,
     handleCancelEditButton,
     handleDeleteButton,
+    isFetchingTasks
   };
 }

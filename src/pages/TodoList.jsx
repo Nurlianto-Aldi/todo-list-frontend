@@ -19,6 +19,7 @@ function TodoList() {
     handleSaveEditButton,
     handleCancelEditButton,
     handleDeleteButton,
+    isFetchingTasks
   } = useTasks()
   
   const navigate = useNavigate();
@@ -45,17 +46,26 @@ function TodoList() {
       />
       
       {/* Task List */}
-      <TaskList
-        taskList={taskList}
-        handleTaskComplete={handleTaskComplete}
-        taskId={taskId}
-        handleEditTaskButton={handleEditTaskButton}
-        userInput={userInput}
-        handleSaveEdit={handleSaveEdit}
-        handleSaveEditButton={handleSaveEditButton}
-        handleCancelEditButton={handleCancelEditButton}
-        handleDeleteButton={handleDeleteButton}
-      />
+      {isFetchingTasks ? (
+        <div className="w-full max-w-xl flex justify-center py-10">
+          <p className="text-white text-lg animate-pulse font-semibold">
+            Loading your tasks...
+          </p>
+        </div>
+      ): (
+        <TaskList
+          taskList={taskList}
+          handleTaskComplete={handleTaskComplete}
+          taskId={taskId}
+          handleEditTaskButton={handleEditTaskButton}
+          userInput={userInput}
+          handleSaveEdit={handleSaveEdit}
+          handleSaveEditButton={handleSaveEditButton}
+          handleCancelEditButton={handleCancelEditButton}
+          handleDeleteButton={handleDeleteButton}
+          isFetchingTasks={isFetchingTasks}
+        />
+      )}
       
       {/* Log Out Button*/}
       <div

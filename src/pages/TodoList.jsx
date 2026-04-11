@@ -10,6 +10,7 @@ function TodoList() {
     taskList,
     userInput,
     handleAddTask,
+    isAddingTask,
     handleOnChangeInput,
     handleTaskComplete,
     taskId,
@@ -39,6 +40,7 @@ function TodoList() {
       <InputNewTask
         userInput={userInput}
         handleAddTask={handleAddTask}
+        isAddingTask={isAddingTask}
         handleOnChangeInput={handleOnChangeInput}
       />
       

@@ -8,6 +8,8 @@ export function useTasks() {
   const [userInput, setUserInput] = useState("");
   const [newInput, setNewInput] = useState("")
   
+  const [isAddingTask, setIsAddingTask] = useState(false)
+  
   const navigate = useNavigate();
   
   const fetchWithAuth = async (endpoint, options = {}) => {
@@ -69,6 +71,8 @@ export function useTasks() {
         return;
       }
       
+      setIsAddingTask(true);
+      
       const response = await fetchWithAuth("/tasks", {
         method: "POST",
         body: JSON.stringify({ task: userInput })
@@ -78,11 +82,13 @@ export function useTasks() {
         throw new Error("Failed to add new task to database")
       }
       
-      fetchTask()
+      await fetchTask()
       setUserInput("")
 
     } catch (err) {
       console.error("WARNING! There is an error:", err)
+    } finally {
+      setIsAddingTask(false)
     }
   }
   
@@ -182,6 +188,7 @@ export function useTasks() {
     taskList,
     userInput,
     handleAddTask,
+    isAddingTask,
     handleOnChangeInput,
     handleTaskComplete,
     taskId,

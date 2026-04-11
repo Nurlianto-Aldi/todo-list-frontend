@@ -192,6 +192,7 @@ export function useTasks() {
   return {
     taskList,
     userInput,
+    newInput,
     handleAddTask,
     isAddingTask,
     handleOnChangeInput,

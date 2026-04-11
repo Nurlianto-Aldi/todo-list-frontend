@@ -9,6 +9,7 @@ function TodoList() {
   const {
     taskList,
     userInput,
+    newInput,
     handleAddTask,
     isAddingTask,
     handleOnChangeInput,
@@ -59,6 +60,7 @@ function TodoList() {
           taskId={taskId}
           handleEditTaskButton={handleEditTaskButton}
           userInput={userInput}
+          newInput={newInput}
           handleSaveEdit={handleSaveEdit}
           handleSaveEditButton={handleSaveEditButton}
           handleCancelEditButton={handleCancelEditButton}
@@ -73,7 +75,7 @@ function TodoList() {
       >
         <button
           onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          className="bg-[#B83A2D] hover:bg-[#8C2C22] text-[#DCC9A9] font-bold py-2 px-6 rounded transition-all duration-200 active:scale-95"
         >
           Log Out
         </button>

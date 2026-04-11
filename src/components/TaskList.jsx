@@ -1,7 +1,7 @@
 import IndividualTask from "./IndividualTask";
 import EditIndividualTask from "./EditIndividualTask";
 
-function TaskList({ taskList, handleTaskComplete, taskId, handleEditTaskButton, handleSaveEdit, handleSaveEditButton, handleCancelEditButton, handleDeleteButton }) {
+function TaskList({ taskList, handleTaskComplete, taskId, handleEditTaskButton, handleSaveEdit, handleSaveEditButton, handleCancelEditButton, handleDeleteButton, newInput }) {
   
   return (
     <div
@@ -22,6 +22,7 @@ function TaskList({ taskList, handleTaskComplete, taskId, handleEditTaskButton, 
           ): (
             <EditIndividualTask
               task={task.task}
+              newInput={newInput}
               handleSaveEdit={handleSaveEdit}
               handleSaveEditButton={handleSaveEditButton}
               handleCancelEditButton={handleCancelEditButton}

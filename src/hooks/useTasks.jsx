@@ -192,6 +192,8 @@ export function useTasks() {
     } catch (err) {
       console.error("WARNING! Optimistic update failed:", err)
       alert("Problem with connection, failed to change. Revert to previous state.")
+      
+      setTaskList(oldTaskList);
     }
   }
   

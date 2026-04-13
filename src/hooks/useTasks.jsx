@@ -155,8 +155,28 @@ export function useTasks() {
   }
   
   const handleSaveEditButton = async () => {
+    if (!newInput.trim()) {
+      handleCancelEditButton();
+      return;
+    }
+    
+    const oldTaskList = [...taskList];
+    
+    const updatedTaskList = taskList.map((task) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          task: newInput
+        };
+      }
+      return task;
+    })
+    
+    setTaskList(updatedTaskList);
+    setTaskId("");
+    setNewInput("");
+    
     try {
-      
       const response = await fetchWithAuth(`/tasks/${taskId}`, {
         method: "PATCH",
         body: JSON.stringify({ task: newInput })
@@ -180,14 +200,22 @@ export function useTasks() {
   }
   
   const handleDeleteButton = async (taskId) => {
+    const oldTaskList = [...task];
+    
+    const targetTask = taskList.find((task) => task.id === taskId)
+    
+    if (targetTask.isCompleted) {
+      alert("Can't delete completed task")
+      return false
+    }
+    
+    const updateTaskList = taskList.filter((task) => task.id !== taskId)
+    
+    setTaskList(updateTaskList)
+    
+    setTaskId("")
+    
     try {
-      const targetTask = taskList.find(task => task.id === taskId)
-      
-      if (targetTask.isCompleted) {
-        alert("Can't delete completed task")
-        return false
-      }
-      
       const response = await fetchWithAuth(`/tasks/${taskId}`, {
         method: "DELETE",
       })
@@ -195,12 +223,11 @@ export function useTasks() {
       if (!response.ok) {
         throw new Error("Failed to delete task from database")
       }
-      
-      await fetchTask()
-      setTaskId("")
-      
     } catch (err) {
-      console.error("WARNING! There is an error:", err)
+      console.error("WARNING! Optimistic update failed:", err)
+      alert("Problem with connection, failed to change. Revert to previous state.")
+      
+      setTaskList(oldTaskList)
     }
     
     

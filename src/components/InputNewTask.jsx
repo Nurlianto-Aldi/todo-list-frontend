@@ -30,9 +30,9 @@ function InputNewTask({ handleAddTask, isAddingTask, userInput, handleOnChangeIn
         className={`py-2 px-4 rounded-r-md w-2/6 sm:w-1/5 text-sm sm:text-base font-bold transition-all duration-200
           ${
             isAddingTask ?
-            "bg-[#4E6851]/50 text-[#DCC9A9]/50 cursor-not-allowed" 
+            "bg-[#4E6851]/50 text-[#DCC9A9]/50 cursor-not-allowed border-2 border-[#4E6851]/50" 
             :
-            "bg-[#4E6851] hover:bg-[#3A4E3D] text-[#1C1A17] active:scale-95"
+            "bg-[#4E6851] hover:bg-[#3A4E3D] text-[#1C1A17] active:scale-95 border border-[#4E6851]"
           }`
         }
       >

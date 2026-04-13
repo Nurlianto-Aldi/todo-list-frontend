@@ -186,11 +186,12 @@ export function useTasks() {
         throw new Error("Failed to update task for task with this id:", taskId)
       }
       
-      fetchTask()
+      // fetchTask()
       setTaskId("")
       setNewInput("")
     } catch (err) {
-      console.error("WARNING! There is an error:", err)
+      console.error("WARNING! Optimistic update failed:", err)
+      alert("Problem with connection, failed to change. Revert to previous state.")
     }
   }
   

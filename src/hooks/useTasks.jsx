@@ -200,7 +200,7 @@ export function useTasks() {
   }
   
   const handleDeleteButton = async (taskId) => {
-    const oldTaskList = [...task];
+    const oldTaskList = [...taskList];
     
     const targetTask = taskList.find((task) => task.id === taskId)
     

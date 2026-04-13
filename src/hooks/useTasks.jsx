@@ -29,7 +29,7 @@ export function useTasks() {
     });
     
     if (response.status === 401 || response.status === 403) {
-      alert("Your session is expired. Silahkan login kembali.");
+      alert("Your session is expired. Please log in.");
       localStorage.removeItem("token");
       navigate("/login");
       throw new Error("SESSION_EXPIRED");
@@ -99,6 +99,20 @@ export function useTasks() {
   
   
   const handleTaskComplete = async (taskId) => {
+    const oldTaskList = [...taskList];
+    
+    const updatedTaskList = taskList.map((task) => {
+      if (task.id === taskId) {
+        return {
+          ...task,
+          isCompleted: !task.isCompleted
+        };
+      }
+      return task;
+    });
+    
+    setTaskList(updatedTaskList.sort((a, b) => a.isCompleted - b.isCompleted));
+    
     try {
       const targetTask = taskList.find((task) => task.id === taskId);
       const newStatus = !targetTask.isCompleted;
@@ -114,10 +128,13 @@ export function useTasks() {
         throw new Error("Failed to change complete status at database")
       }
       
-      fetchTask()
+      // fetchTask()
       
     } catch (err) {
-      console.error("WARNING! There is an error:", err)
+      console.error("WARNING! Optimistic Update Failed:", err)
+      alert("Problem with connection, failed to change. Revert to previous state.")
+      
+      setTaskList(oldTaskList);
     }
   }
   

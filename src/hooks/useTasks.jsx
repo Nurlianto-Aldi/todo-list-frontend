@@ -40,24 +40,38 @@ export function useTasks() {
   
   const fetchTask = async () => {
     setIsFetchingTask(true)
-    try {
-      const response = await fetchWithAuth("/tasks", { method: "GET" })
-      
-      if (!response.ok) {
-        throw new Error("Failed to fetch all task:")
-      }
     
-      const result = await response.json()
-      const dataFromBE = result.data
-      const sortedData = dataFromBE.sort((a, b) => a.isCompleted - b.isCompleted)
+    const token = localStorage.getItem("token");
+    
+    if (token) {
+      try {
+        const response = await fetchWithAuth("/tasks", { method: "GET" })
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch all task:")
+        }
       
-      setTaskList(sortedData)
+        const result = await response.json()
+        const dataFromBE = result.data
+        const sortedData = dataFromBE.sort((a, b) => a.isCompleted - b.isCompleted)
+        
+        setTaskList(sortedData)
+        
+      } catch (err) {
+        console.error("WARNING! There is an error:", err)
+      } finally {
+        setIsFetchingTask(false)
+      }
+    } else {
+      const savedGuestTasks = localStorage.getItem("guest_tasks");
       
-    } catch (err) {
-      console.error("WARNING! There is an error:", err)
-    } finally {
+      const parsedGuestTasks = savedGuestTasks ? JSON.parse(savedGuestTasks) : [];
+      
+      setTaskList(parsedGuestTasks);
+      
       setIsFetchingTask(false)
     }
+    
   }
   
   useEffect(() => {
@@ -70,71 +84,112 @@ export function useTasks() {
   }
   
   const handleAddTask = async () => {
-    try {
-      if (!userInput.trim()) {
-        alert("Task can't be empty")
-        return;
-      }
-      
-      setIsAddingTask(true);
-      
-      const response = await fetchWithAuth("/tasks", {
-        method: "POST",
-        body: JSON.stringify({ task: userInput })
-      });
-      
-      if (!response.ok) {
-        throw new Error("Failed to add new task to database")
-      }
-      
-      await fetchTask()
-      setUserInput("")
-
-    } catch (err) {
-      console.error("WARNING! There is an error:", err)
-    } finally {
-      setIsAddingTask(false)
+    if (!userInput.trim()) {
+      alert("Task can't be empty")
+      return;
     }
+    
+    const token = localStorage.getItem("token");
+    
+    if (token) {
+      try {
+        setIsAddingTask(true);
+        
+        const response = await fetchWithAuth("/tasks", {
+          method: "POST",
+          body: JSON.stringify({ task: userInput })
+        });
+        
+        if (!response.ok) {
+          throw new Error("Failed to add new task to database")
+        }
+        
+        await fetchTask()
+        setUserInput("")
+  
+      } catch (err) {
+        console.error("WARNING! There is an error:", err)
+      } finally {
+        setIsAddingTask(false)
+      }
+    } else {
+      const newGuestTask = {
+        id: `guest-${Date.now()}`,
+        task: userInput,
+        isCompleted: false,
+        createdAt: new Date().toISOString()
+      };
+      
+      const currentTasks = JSON.parse(localStorage.getItem("guest_tasks") || "[]");
+      const updatedTasks = [newGuestTask, ...currentTasks];
+      
+      localStorage.setItem("guest_tasks", JSON.stringify(updatedTasks));
+      
+      setTaskList(updatedTasks.sort((a, b) => a.isCompleted - b.isCompleted));
+      setUserInput("")
+    }
+    
   }
   
   
   const handleTaskComplete = async (taskId) => {
-    const oldTaskList = [...taskList];
     
-    const updatedTaskList = taskList.map((task) => {
-      if (task.id === taskId) {
-        return {
-          ...task,
-          isCompleted: !task.isCompleted
-        };
-      }
-      return task;
-    });
+    const token = localStorage.getItem("token");
     
-    setTaskList(updatedTaskList.sort((a, b) => a.isCompleted - b.isCompleted));
-    
-    try {
-      const targetTask = taskList.find((task) => task.id === taskId);
-      const newStatus = !targetTask.isCompleted;
+    if (token) {
+      const oldTaskList = [...taskList];
       
-      const response = await fetchWithAuth(`/tasks/${taskId}/complete`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          isCompleted: newStatus
+      const updatedTaskList = taskList.map((task) => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            isCompleted: !task.isCompleted
+          };
+        }
+        return task;
+      });
+      
+      setTaskList(updatedTaskList.sort((a, b) => a.isCompleted - b.isCompleted));
+      
+      try {
+        const targetTask = taskList.find((task) => task.id === taskId);
+        const newStatus = !targetTask.isCompleted;
+        
+        const response = await fetchWithAuth(`/tasks/${taskId}/complete`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            isCompleted: newStatus
+          })
         })
-      })
-      
-      if (!response.ok) {
-        throw new Error("Failed to change complete status at database")
+        
+        if (!response.ok) {
+          throw new Error("Failed to change complete status at database")
+        }
+        
+        // fetchTask()
+        
+      } catch (err) {
+        console.error("WARNING! Optimistic Update Failed:", err)
+        alert("Problem with connection, failed to change. Revert to previous state.")
+        
+        setTaskList(oldTaskList);
       }
+    } else {
+      const updatedTaskList = taskList.map((task) => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            isCompleted: !task.isCompleted
+          };
+        }
+        return task;
+      });
       
-      // fetchTask()
+      const sortedUpdate = updatedTaskList.sort((a, b) => a.isCompleted - b.isCompleted)
       
-    } catch (err) {
-      console.error("WARNING! Optimistic Update Failed:", err)
-      alert("Problem with connection, failed to change. Revert to previous state.")
+      setTaskList(sortedUpdate);
       
-      setTaskList(oldTaskList);
+      localStorage.setItem("guest_tasks", JSON.stringify(sortedUpdate))
     }
   }
   
@@ -160,40 +215,60 @@ export function useTasks() {
       return;
     }
     
-    const oldTaskList = [...taskList];
+    const token = localStorage.getItem("token");
     
-    const updatedTaskList = taskList.map((task) => {
-      if (task.id === taskId) {
-        return {
-          ...task,
-          task: newInput
-        };
-      }
-      return task;
-    })
-    
-    setTaskList(updatedTaskList);
-    setTaskId("");
-    setNewInput("");
-    
-    try {
-      const response = await fetchWithAuth(`/tasks/${taskId}`, {
-        method: "PATCH",
-        body: JSON.stringify({ task: newInput })
-        })
+    if (token) {
+      const oldTaskList = [...taskList];
       
-      if (!response.ok) {
-        throw new Error("Failed to update task for task with this id:", taskId)
-      }
+      const updatedTaskList = taskList.map((task) => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            task: newInput
+          };
+        }
+        return task;
+      })
       
-      // fetchTask()
-      setTaskId("")
-      setNewInput("")
-    } catch (err) {
-      console.error("WARNING! Optimistic update failed:", err)
-      alert("Problem with connection, failed to change. Revert to previous state.")
+      setTaskList(updatedTaskList);
+      setTaskId("");
+      setNewInput("");
       
-      setTaskList(oldTaskList);
+      try {
+        const response = await fetchWithAuth(`/tasks/${taskId}`, {
+          method: "PATCH",
+          body: JSON.stringify({ task: newInput })
+          })
+        
+        if (!response.ok) {
+          throw new Error("Failed to update task for task with this id:", taskId)
+        }
+        
+        // fetchTask()
+        setTaskId("")
+        setNewInput("")
+      } catch (err) {
+        console.error("WARNING! Optimistic update failed:", err)
+        alert("Problem with connection, failed to change. Revert to previous state.")
+        
+        setTaskList(oldTaskList);
+      }  
+    } else {
+      const updatedTaskList = taskList.map((task) => {
+        if (task.id === taskId) {
+          return {
+            ...task,
+            task: newInput
+          };
+        }
+        return task;
+      })
+      
+      setTaskList(updatedTaskList);
+      setTaskId("");
+      setNewInput("");
+      
+      localStorage.setItem("guest_tasks", JSON.stringify(updatedTaskList))
     }
   }
   
@@ -203,36 +278,54 @@ export function useTasks() {
   }
   
   const handleDeleteButton = async (taskId) => {
-    const oldTaskList = [...taskList];
     
-    const targetTask = taskList.find((task) => task.id === taskId)
+    const token = localStorage.getItem("token");
     
-    if (targetTask.isCompleted) {
-      alert("Can't delete completed task")
-      return false
-    }
-    
-    const updateTaskList = taskList.filter((task) => task.id !== taskId)
-    
-    setTaskList(updateTaskList)
-    
-    setTaskId("")
-    
-    try {
-      const response = await fetchWithAuth(`/tasks/${taskId}`, {
-        method: "DELETE",
-      })
-            
-      if (!response.ok) {
-        throw new Error("Failed to delete task from database")
-      }
-    } catch (err) {
-      console.error("WARNING! Optimistic update failed:", err)
-      alert("Problem with connection, failed to change. Revert to previous state.")
+    if (token) {
+      const oldTaskList = [...taskList];
       
-      setTaskList(oldTaskList)
+      const targetTask = taskList.find((task) => task.id === taskId)
+      
+      if (targetTask.isCompleted) {
+        alert("Can't delete completed task")
+        return false
+      }
+      
+      const updateTaskList = taskList.filter((task) => task.id !== taskId)
+      
+      setTaskList(updateTaskList)
+      
+      setTaskId("")
+      
+      try {
+        const response = await fetchWithAuth(`/tasks/${taskId}`, {
+          method: "DELETE",
+        })
+              
+        if (!response.ok) {
+          throw new Error("Failed to delete task from database")
+        }
+      } catch (err) {
+        console.error("WARNING! Optimistic update failed:", err)
+        alert("Problem with connection, failed to change. Revert to previous state.")
+        
+        setTaskList(oldTaskList)
+      }
+    } else {
+      const targetTask = taskList.find((task) => task.id === taskId)
+      
+      if (targetTask.isCompleted) {
+        alert("Can't delete completed task")
+        return false
+      }
+      
+      const updatedTaskList = taskList.filter((task) => task.id !== taskId)
+      
+      setTaskList(updatedTaskList);
+      setTaskId("");
+      
+      localStorage.setItem("guest_tasks", JSON.stringify(updatedTaskList));
     }
-    
     
   }
   

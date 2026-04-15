@@ -75,7 +75,9 @@ function Register() {
           {isLoading ? "Loading..." : "Sign Up"}
         </button>
       </form>
-      <div>
+      <div
+        className="mt-4"
+      >
         <p>
           Already have an account? Please{" "}
           <Link to="/login" className="text-[#4E6851] hover:text-[#DCC9A9] transition-colors font-semibold">

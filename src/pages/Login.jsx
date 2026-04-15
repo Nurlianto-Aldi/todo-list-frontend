@@ -76,12 +76,31 @@ function Login() {
           {isLoading ? "Loading..." : "Sign In"}
         </button>
       </form>
-      <div>
+      <div
+        className="mt-4"
+      >
         <p>
           Don't have an account yet? Please{" "}
           <Link to="/register" className="text-[#4E6851] hover:text-[#DCC9A9] transition-colors font-semibold">
             Sign Up
           </Link>
+        </p>
+      </div>
+      <div
+        className="mt-2"
+      >
+        <p>
+          or{" "}
+          <button
+            type="button"
+            onClick={() => {
+              localStorage.setItem("isGuest", "true");
+              navigate("/")
+            }}
+            className="text-[#4E6851] hover:text-[#DCC9A9] transition-colors font-semibold cursor-pointer"
+          >
+            Continue as Guest
+          </button>
         </p>
       </div>
     </div>

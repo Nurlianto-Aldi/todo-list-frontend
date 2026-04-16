@@ -9,7 +9,7 @@ While currently focusing on core task management capabilities, the architecture 
 ## 🔗 Project Repositories
 This project adopts a microservices-inspired architecture, separating the client interface from the API logic:
 * **Frontend Repository:** You are here.
-* **Backend Repository:** https://github.com/Nurlianto-Aldi/todo-list-backend
+* **Backend Repository:** [todo-list-backend](https://github.com/Nurlianto-Aldi/todo-list-backend)
 
 ## ✨ Highlight Features
 
@@ -54,4 +54,4 @@ If you want to run this project locally, follow these steps. (Note: You will als
   ```
   
 ## About the Developer
-Built with focus and coffee by [Nurlianto Aldi](https://www.google.com/search?q=https://www.linkedin.com/in/nurlianto-aldi). Transitioning from NGO Project Management to Software Engineering, bringing strategic thinking and user-centric design into code.
+Built with focus and coffee by [Nurlianto Aldi](https://www.linkedin.com/in/nurlianto-aldi). Transitioning from NGO Project Management to Software Engineering, bringing strategic thinking and user-centric design into code.

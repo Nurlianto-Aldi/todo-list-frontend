@@ -1,45 +1,21 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   
-  const navigate = useNavigate();
-  
+  const {
+    register,
+    isLoading,
+    continueAsGuest
+  } = useAuth();
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    
-    setIsLoading(true)
-    
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      })
-      
-      const data = await response.json();
-      if (response.ok) {
-        alert("Account Created")
-        navigate("/login")
-      } else {
-        alert(data.message)
-      }
-
-    } catch (err) {
-      console.error("Failed to connect to server:", err)
-    } finally {
-      setIsLoading(false)
-    }
+    register(email, password);
   }
-  
   
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -83,6 +59,20 @@ function Register() {
           <Link to="/login" className="text-[#4E6851] hover:text-[#DCC9A9] transition-colors font-semibold">
             Sign In
           </Link>
+        </p>
+      </div>
+      <div
+        className="mt-2"
+      >
+        <p>
+          or{" "}
+          <button
+            type="button"
+            onClick={continueAsGuest}
+            className="text-[#4E6851] hover:text-[#DCC9A9] transition-colors font-semibold cursor-pointer"
+          >
+            Continue as Guest
+          </button>
         </p>
       </div>
     </div>

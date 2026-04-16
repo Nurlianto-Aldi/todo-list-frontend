@@ -1,44 +1,20 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   
-  const navigate = useNavigate();
+  const {
+    login,
+    isLoading,
+    continueAsGuest
+  } = useAuth();
   
   const handleLogin = async (e) => {
     e.preventDefault();
-    
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      })
-      
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        navigate("/")
-      } else {
-        alert(data.message)
-      }
-    } catch (error) {
-      alert("Terjadi kesalahan jaringan, coba lagi.")
-      console.error("Gagal menyambung ke server:", error)
-    } finally {
-      setIsLoading(false)
-    }
-      
+    login(email, password)
   }
   
   return (
@@ -93,10 +69,7 @@ function Login() {
           or{" "}
           <button
             type="button"
-            onClick={() => {
-              localStorage.setItem("isGuest", "true");
-              navigate("/")
-            }}
+            onClick={continueAsGuest}
             className="text-[#4E6851] hover:text-[#DCC9A9] transition-colors font-semibold cursor-pointer"
           >
             Continue as Guest
